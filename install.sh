@@ -20,11 +20,10 @@ fi
 if [[ ! -f "$timer" ]]; then
 	cat >"$timer" <<EOF
 [Unit]
-Description=Run post-logrotate script every day
+Description=Run post-logrotate script every 24 hours and 5 minutes
 
 [Timer]
-OnCalendar=daily
-AccuracySec=12h
+OnCalendar=*-*-* 00:05:00
 Persistent=true
 
 [Install]
