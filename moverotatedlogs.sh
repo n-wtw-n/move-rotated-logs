@@ -14,7 +14,27 @@ if (( $# >= 1 )); then
 		if [[ "$1" == '-'[a-zA-Z] ]]; then
 			case "${1#-}" in
 				f)
-					tarfile="${2%/*}/$(date '+%Y-%m-%d').${2##*/}"
+                                  	count=0
+                                  	touch "$2" 2>/dev/null &
+                                  	while ps -p "$!" >/dev/null 2>&1; do
+                                  		if [[ "$count" == "6" ]]; then
+                                       	 		logger "${2%/*} is unresponsive. Exiting."
+                                                	exit 1
+						else
+                                        		sleep 1 && let count=count+1
+                                        	fi
+                                  	done
+				  	if [[ -d "${2%/*}" ]]; then
+				  		if [[ ! -d "$2" ]]; then
+							unset 'count'
+							tarfile="${2%/*}/$(date '+%Y-%m-%d').${2##*/}"; 
+                                		else
+							logger "$2 is a directory. Exiting"
+						fi
+					else
+                                  		logger "${2%/*} is not a directory. Exiting."
+                                  		exit 1
+					fi
 					;;
 				h)
 					usage
